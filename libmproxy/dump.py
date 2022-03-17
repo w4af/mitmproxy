@@ -1,4 +1,4 @@
-from __future__ import absolute_import, print_function
+
 import json
 import sys
 import os
@@ -45,7 +45,7 @@ class Options(object):
     ]
 
     def __init__(self, **kwargs):
-        for k, v in kwargs.items():
+        for k, v in list(kwargs.items()):
             setattr(self, k, v)
         for i in self.attributes:
             if not hasattr(self, i):

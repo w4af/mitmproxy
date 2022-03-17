@@ -78,7 +78,7 @@ def test(ctx):
     pip = join(test_venv_dir, venv_bin, "pip")
     chdir(dist_dir)
     for project in projects:
-        print("Installing %s..." % project)
+        print(("Installing %s..." % project))
         dist = glob.glob("./%s*" % project)[0]
         subprocess.check_call([pip, "install", "-q", dist])
 
@@ -86,10 +86,10 @@ def test(ctx):
     for tool in tools:
         tool = join(test_venv_dir, venv_bin, tool)
         print(tool)
-        print(subprocess.check_output([tool, "--version"]))
+        print((subprocess.check_output([tool, "--version"])))
 
     print("Virtualenv available for further testing:")
-    print(normpath(join(test_venv_dir, venv_bin, "activate")))
+    print((normpath(join(test_venv_dir, venv_bin, "activate"))))
 
 
 @cli.command("release")
@@ -101,7 +101,7 @@ def release():
     if exists(dist_dir):
         shutil.rmtree(dist_dir)
     for project in projects:
-        print("Creating %s source distribution..." % project)
+        print(("Creating %s source distribution..." % project))
         subprocess.check_call(
             ["python", "./setup.py", "-q", "sdist", "--dist-dir", dist_dir, "--formats=gztar"],
             cwd=join(root_dir, project)
@@ -124,7 +124,7 @@ def set_version(version):
 @click.argument('version')
 def git_tag(version):
     for project in projects:
-        print("Tagging %s..." % project)
+        print(("Tagging %s..." % project))
         subprocess.check_call(
             ["git", "tag", version],
             cwd=join(root_dir, project)

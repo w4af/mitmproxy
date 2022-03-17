@@ -113,12 +113,12 @@ def response(context, flow):
     # HAR timings are integers in ms, so we have to re-encode the raw timings to
     # that format.
     timings = dict([(key, int(1000 * value))
-                    for key, value in timings_raw.iteritems()])
+                    for key, value in timings_raw.items()])
 
     # The full_time is the sum of all timings. Timings set to -1 will be ignored
     # as per spec.
     full_time = 0
-    for item in timings.values():
+    for item in list(timings.values()):
         if item > -1:
             full_time += item
 
@@ -131,7 +131,7 @@ def response(context, flow):
     request_http_version = ".".join([str(v) for v in flow.request.httpversion])
     # Cookies are shaped as tuples by MITMProxy.
     request_cookies = [{"name": k.strip(), "value": v[0]}
-                       for k, v in (flow.request.get_cookies() or {}).iteritems()]
+                       for k, v in (flow.request.get_cookies() or {}).items()]
     request_headers = [{"name": k, "value": v} for k, v in flow.request.headers]
     request_headers_size = len(str(flow.request.headers))
     request_body_size = len(flow.request.content)
@@ -140,7 +140,7 @@ def response(context, flow):
         [str(v) for v in flow.response.httpversion])
     # Cookies are shaped as tuples by MITMProxy.
     response_cookies = [{"name": k.strip(), "value": v[0]}
-                        for k, v in (flow.response.get_cookies() or {}).iteritems()]
+                        for k, v in (flow.response.get_cookies() or {}).items()]
     response_headers = [{"name": k, "value": v}
                         for k, v in flow.response.headers]
     response_headers_size = len(str(flow.response.headers))
@@ -251,4 +251,4 @@ def print_attributes(obj, filter_string=None, hide_privates=False):
         if filter_string is not None and filter_string not in attr:
             continue
         value = getattr(obj, attr)
-        print("%s.%s" % ('obj', attr), value, type(value))
+        print(("%s.%s" % ('obj', attr), value, type(value)))

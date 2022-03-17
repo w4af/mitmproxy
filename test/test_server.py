@@ -797,7 +797,7 @@ class TestFakeResponse(tservers.HTTPProxTest):
 
     def test_fake(self):
         f = self.pathod("200")
-        assert "header_response" in f.headers.keys()
+        assert "header_response" in list(f.headers.keys())
 
 
 class MasterKillRequest(tservers.TestMaster):

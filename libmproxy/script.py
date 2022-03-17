@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+
 import os
 import traceback
 import threading
@@ -96,7 +96,7 @@ class Script:
         """
         ns = {}
         try:
-            execfile(self.argv[0], ns, ns)
+            exec(compile(open(self.argv[0], "rb").read(), self.argv[0], 'exec'), ns, ns)
         except Exception as v:
             raise ScriptError(traceback.format_exc(v))
         self.ns = ns
@@ -167,7 +167,7 @@ class ScriptThread(threading.Thread):
 
 
 def concurrent(fn):
-    if fn.func_name in (
+    if fn.__name__ in (
             "request",
             "response",
             "error",

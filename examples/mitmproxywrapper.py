@@ -32,14 +32,14 @@ class Wrapper(object):
         return dict([re.findall(r'([^:]+): (.*)', line)[0] for line in state])
 
     def enable_proxy_for_service(self, service):
-        print('Enabling proxy on {}...'.format(service))
+        print(('Enabling proxy on {}...'.format(service)))
         for subcommand in ['-setwebproxy', '-setsecurewebproxy']:
             self.run_networksetup_command(
                 subcommand, service, '127.0.0.1', str(
                     self.port))
 
     def disable_proxy_for_service(self, service):
-        print('Disabling proxy on {}...'.format(service))
+        print(('Disabling proxy on {}...'.format(service)))
         for subcommand in ['-setwebproxystate', '-setsecurewebproxystate']:
             self.run_networksetup_command(subcommand, service, 'Off')
 

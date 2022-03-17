@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+
 
 import copy
 import re
@@ -692,7 +692,7 @@ class SetCookieEditor(GridEditor):
 
     def data_in(self, data):
         flattened = []
-        for k, v in data.items():
+        for k, v in list(data.items()):
             flattened.append([k, v[0], v[1].lst])
         return flattened
 

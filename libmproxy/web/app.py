@@ -124,11 +124,11 @@ class FlowHandler(RequestHandler):
     def put(self, flow_id):
         flow = self.flow
         flow.backup()
-        for a, b in self.json.iteritems():
+        for a, b in self.json.items():
 
             if a == "request":
                 request = flow.request
-                for k, v in b.iteritems():
+                for k, v in b.items():
                     if k in ["method", "scheme", "host", "path"]:
                         setattr(request, k, str(v))
                     elif k == "port":
@@ -138,11 +138,11 @@ class FlowHandler(RequestHandler):
                     elif k == "headers":
                         request.headers.load_state(v)
                     else:
-                        print "Warning: Unknown update {}.{}: {}".format(a, k, v)
+                        print("Warning: Unknown update {}.{}: {}".format(a, k, v))
 
             elif a == "response":
                 response = flow.response
-                for k, v in b.iteritems():
+                for k, v in b.items():
                     if k == "msg":
                         response.msg = str(v)
                     elif k == "code":
@@ -152,9 +152,9 @@ class FlowHandler(RequestHandler):
                     elif k == "headers":
                         response.headers.load_state(v)
                     else:
-                        print "Warning: Unknown update {}.{}: {}".format(a, k, v)
+                        print("Warning: Unknown update {}.{}: {}".format(a, k, v))
             else:
-                print "Warning: Unknown update {}: {}".format(a, b)
+                print("Warning: Unknown update {}: {}".format(a, b))
         self.state.update_flow(flow)
 
 
@@ -228,12 +228,12 @@ class Settings(RequestHandler):
 
     def put(self):
         update = {}
-        for k, v in self.json.iteritems():
+        for k, v in self.json.items():
             if k == "intercept":
                 self.state.set_intercept(v)
                 update[k] = v
             else:
-                print("Warning: Unknown setting {}: {}".format(k, v))
+                print(("Warning: Unknown setting {}: {}".format(k, v)))
 
         ClientConnection.broadcast(
             type="settings",

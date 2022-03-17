@@ -1,11 +1,11 @@
 """
     This module provides more sophisticated flow tracking and provides filtering and interception facilities.
 """
-from __future__ import absolute_import
+
 from abc import abstractmethod, ABCMeta
 import hashlib
-import Cookie
-import cookielib
+import http.cookies
+import http.cookiejar
 import os
 import re
 from netlib import odict, wsgi, tcp
@@ -15,7 +15,7 @@ from .onboarding import app
 from .protocol import http, handle
 from .proxy.config import HostMatcher
 from .proxy.connection import ClientConnection, ServerConnection
-import urlparse
+import urllib.parse
 
 
 class AppRegistry:
@@ -229,7 +229,7 @@ class ServerPlaybackState:
                 l.append(i)
 
     def count(self):
-        return sum(len(i) for i in self.fmap.values())
+        return sum(len(i) for i in list(self.fmap.values()))
 
     def _hash(self, flow):
         """
@@ -237,8 +237,8 @@ class ServerPlaybackState:
         """
         r = flow.request
 
-        _, _, path, _, query, _ = urlparse.urlparse(r.url)
-        queriesArray = urlparse.parse_qsl(query, keep_blank_values=True)
+        _, _, path, _, query, _ = urllib.parse.urlparse(r.url)
+        queriesArray = urllib.parse.parse_qsl(query, keep_blank_values=True)
 
         key = [
             str(r.port),
@@ -314,9 +314,9 @@ class StickyCookieState:
         )
 
     def domain_match(self, a, b):
-        if cookielib.domain_match(a, b):
+        if http.cookiejar.domain_match(a, b):
             return True
-        elif cookielib.domain_match(a, b.strip(".")):
+        elif http.cookiejar.domain_match(a, b.strip(".")):
             return True
         return False
 
@@ -324,8 +324,8 @@ class StickyCookieState:
         for i in f.response.headers["set-cookie"]:
             # FIXME: We now know that Cookie.py screws up some cookies with
             # valid RFC 822/1123 datetime specifications for expiry. Sigh.
-            c = Cookie.SimpleCookie(str(i))
-            for m in c.values():
+            c = http.cookies.SimpleCookie(str(i))
+            for m in list(c.values()):
                 k = self.ckey(m, f)
                 if self.domain_match(f.request.host, k[0]):
                     self.jar[k] = m
@@ -333,7 +333,7 @@ class StickyCookieState:
     def handle_request(self, f):
         l = []
         if f.match(self.flt):
-            for i in self.jar.keys():
+            for i in list(self.jar.keys()):
                 match = [
                     self.domain_match(f.request.host, i[0]),
                     f.request.port == i[1],
@@ -363,9 +363,7 @@ class StickyAuthState:
                 f.request.headers["authorization"] = self.hosts[host]
 
 
-class FlowList(object):
-    __metaclass__ = ABCMeta
-
+class FlowList(object, metaclass=ABCMeta):
     def __iter__(self):
         return iter(self._list)
 
@@ -375,7 +373,7 @@ class FlowList(object):
     def __getitem__(self, item):
         return self._list[item]
 
-    def __nonzero__(self):
+    def __bool__(self):
         return bool(self._list)
 
     def __len__(self):

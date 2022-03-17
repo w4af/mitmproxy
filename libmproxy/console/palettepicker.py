@@ -21,7 +21,7 @@ class PalettePicker(urwid.WidgetWrap):
     def __init__(self, master):
         self.master = master
         low, high = [], []
-        for k, v in palettes.palettes.items():
+        for k, v in list(palettes.palettes.items()):
             if v.high:
                 high.append(k)
             else:

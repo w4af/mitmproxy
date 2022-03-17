@@ -1,10 +1,10 @@
 import configargparse
-import cPickle as pickle
+import pickle as pickle
 from ctypes import byref, windll, Structure
 from ctypes.wintypes import DWORD
 import os
 import socket
-import SocketServer
+import socketserver
 import struct
 import threading
 import time
@@ -52,7 +52,7 @@ class Resolver(object):
                 return self.original_addr(csock)
 
 
-class APIRequestHandler(SocketServer.StreamRequestHandler):
+class APIRequestHandler(socketserver.StreamRequestHandler):
     """
     TransparentProxy API: Returns the pickled server address, port tuple
     for each received pickled client address, port tuple.
@@ -76,9 +76,9 @@ class APIRequestHandler(SocketServer.StreamRequestHandler):
             proxifier.trusted_pids.discard(pid)
 
 
-class APIServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
+class APIServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     def __init__(self, proxifier, *args, **kwargs):
-        SocketServer.TCPServer.__init__(self, *args, **kwargs)
+        socketserver.TCPServer.__init__(self, *args, **kwargs)
         self.proxifier = proxifier
         self.daemon_threads = True
 
@@ -371,7 +371,7 @@ class TransparentProxy(object):
             if server:
                 packet.src_addr, packet.src_port = server
             else:
-                print("Warning: Previously unseen connection from proxy to %s:%s." % client)
+                print(("Warning: Previously unseen connection from proxy to %s:%s." % client))
 
             packet = self.driver.update_packet_checksums(packet)
             self.response_handle.send((packet.raw, metadata))
@@ -418,7 +418,7 @@ if __name__ == "__main__":
     proxy = TransparentProxy(**vars(options))
     proxy.start()
     print(" * Transparent proxy active.")
-    print("   Filter: {0}".format(proxy.request_filter))
+    print(("   Filter: {0}".format(proxy.request_filter)))
     try:
         while True:
             time.sleep(1)

@@ -1,8 +1,8 @@
 """
     Utility functions for decoding response bodies.
 """
-from __future__ import absolute_import
-import cStringIO
+
+import io
 import gzip
 import zlib
 
@@ -42,7 +42,7 @@ def identity(content):
 
 
 def decode_gzip(content):
-    gfile = gzip.GzipFile(fileobj=cStringIO.StringIO(content))
+    gfile = gzip.GzipFile(fileobj=io.StringIO(content))
     try:
         return gfile.read()
     except (IOError, EOFError):
@@ -50,7 +50,7 @@ def decode_gzip(content):
 
 
 def encode_gzip(content):
-    s = cStringIO.StringIO()
+    s = io.StringIO()
     gf = gzip.GzipFile(fileobj=s, mode='wb')
     gf.write(content)
     gf.close()

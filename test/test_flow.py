@@ -1,7 +1,7 @@
-import Queue
+import queue
 import time
 import os.path
-from cStringIO import StringIO
+from io import StringIO
 import email.utils
 import mock
 from netlib import odict
@@ -53,13 +53,13 @@ class TestStickyCookieState:
             "Expires=Wed, 13-Jan-2021 22:23:01 GMT; Secure; "
 
         s, f = self._response(c, "host")
-        assert not s.jar.keys()
+        assert not list(s.jar.keys())
 
         s, f = self._response(c, "www.google.com")
-        assert s.jar.keys()
+        assert list(s.jar.keys())
 
         s, f = self._response("SSID=mooo", "www.google.com")
-        assert s.jar.keys()[0] == ('www.google.com', 80, '/')
+        assert list(s.jar.keys())[0] == ('www.google.com', 80, '/')
 
     def test_handle_request(self):
         s, f = self._response("SSID=mooo", "www.google.com")
@@ -106,7 +106,7 @@ class TestClientPlaybackState:
         c.clear(c.current)
         assert c.done()
 
-        q = Queue.Queue()
+        q = queue.Queue()
         fm.state.clear()
         fm.tick(q, timeout=0)
 
@@ -173,7 +173,7 @@ class TestServerPlaybackState:
             None, [
                 r, r2], False, False, None, False, None, False)
         assert s.count() == 2
-        assert len(s.fmap.keys()) == 1
+        assert len(list(s.fmap.keys())) == 1
 
         n = s.next_flow(r)
         assert n.request.headers["key"] == ["one"]
@@ -453,7 +453,7 @@ class TestFlow:
     def test_replace_unicode(self):
         f = tutils.tflow(resp=True)
         f.response.content = "\xc2foo"
-        f.replace("foo", u"bar")
+        f.replace("foo", "bar")
 
     def test_replace(self):
         f = tutils.tflow(resp=True)
@@ -841,7 +841,7 @@ class TestFlowMaster:
         assert not fm.start_client_playback(pb, False)
         fm.client_playback.testing = True
 
-        q = Queue.Queue()
+        q = queue.Queue()
         assert not fm.state.flow_count()
         fm.tick(q, 0)
         assert fm.state.flow_count()
@@ -897,7 +897,7 @@ class TestFlowMaster:
             False,
             None,
             False)
-        q = Queue.Queue()
+        q = queue.Queue()
         fm.tick(q, 0)
         assert fm.should_exit.is_set()
 

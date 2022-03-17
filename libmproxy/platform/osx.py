@@ -1,5 +1,5 @@
 import subprocess
-import pf
+from . import pf
 
 """
     Doing this the "right" way by using DIOCNATLOOK on the pf device turns out

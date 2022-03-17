@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+
 
 import mailcap
 import mimetypes
@@ -158,7 +158,7 @@ class Options(object):
     ]
 
     def __init__(self, **kwargs):
-        for k, v in kwargs.items():
+        for k, v in list(kwargs.items()):
             setattr(self, k, v)
         for i in self.attributes:
             if not hasattr(self, i):
@@ -181,7 +181,7 @@ class ConsoleMaster(flow.FlowMaster):
 
         r = self.set_intercept(options.intercept)
         if r:
-            print >> sys.stderr, "Intercept error:", r
+            print("Intercept error:", r, file=sys.stderr)
             sys.exit(1)
 
         if options.limit:
@@ -189,12 +189,12 @@ class ConsoleMaster(flow.FlowMaster):
 
         r = self.set_stickycookie(options.stickycookie)
         if r:
-            print >> sys.stderr, "Sticky cookies error:", r
+            print("Sticky cookies error:", r, file=sys.stderr)
             sys.exit(1)
 
         r = self.set_stickyauth(options.stickyauth)
         if r:
-            print >> sys.stderr, "Sticky auth error:", r
+            print("Sticky auth error:", r, file=sys.stderr)
             sys.exit(1)
 
         self.set_stream_large_bodies(options.stream_large_bodies)
@@ -222,7 +222,7 @@ class ConsoleMaster(flow.FlowMaster):
             for i in options.scripts:
                 err = self.load_script(i)
                 if err:
-                    print >> sys.stderr, "Script load error:", err
+                    print("Script load error:", err, file=sys.stderr)
                     sys.exit(1)
 
         if options.outfile:
@@ -231,7 +231,7 @@ class ConsoleMaster(flow.FlowMaster):
                 options.outfile[1]
             )
             if err:
-                print >> sys.stderr, "Stream file error:", err
+                print("Stream file error:", err, file=sys.stderr)
                 sys.exit(1)
 
         self.view_stack = []
@@ -478,7 +478,7 @@ class ConsoleMaster(flow.FlowMaster):
                 )
             elif ret and not self.state.flow_count():
                 self.shutdown()
-                print >> sys.stderr, "Could not load file:", ret
+                print("Could not load file:", ret, file=sys.stderr)
                 sys.exit(1)
 
         self.loop.set_alarm_in(0.01, self.ticker)
@@ -500,11 +500,11 @@ class ConsoleMaster(flow.FlowMaster):
         except Exception:
             self.loop.stop()
             sys.stdout.flush()
-            print >> sys.stderr, traceback.format_exc()
-            print >> sys.stderr, "mitmproxy has crashed!"
-            print >> sys.stderr, "Please lodge a bug report at:"
-            print >> sys.stderr, "\thttps://github.com/mitmproxy/mitmproxy"
-            print >> sys.stderr, "Shutting down..."
+            print(traceback.format_exc(), file=sys.stderr)
+            print("mitmproxy has crashed!", file=sys.stderr)
+            print("Please lodge a bug report at:", file=sys.stderr)
+            print("\thttps://github.com/mitmproxy/mitmproxy", file=sys.stderr)
+            print("Shutting down...", file=sys.stderr)
         sys.stderr.flush()
         self.shutdown()
 

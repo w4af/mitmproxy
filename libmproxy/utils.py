@@ -1,7 +1,7 @@
-from __future__ import absolute_import
+
 import os
 import datetime
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import re
 import time
 import functools
@@ -72,7 +72,7 @@ def urlencode(s):
         Takes a list of (key, value) tuples and returns a urlencoded string.
     """
     s = [tuple(i) for i in s]
-    return urllib.urlencode(s, False)
+    return urllib.parse.urlencode(s, False)
 
 
 def multipartdecode(hdrs, content):

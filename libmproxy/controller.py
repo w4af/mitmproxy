@@ -1,5 +1,5 @@
-from __future__ import absolute_import
-import Queue
+
+import queue
 import threading
 
 
@@ -25,7 +25,7 @@ class Reply:
 
     def __init__(self, obj):
         self.obj = obj
-        self.q = Queue.Queue()
+        self.q = queue.Queue()
         self.acked = False
 
     def __call__(self, msg=None):
@@ -53,7 +53,7 @@ class Channel:
             try:
                 # The timeout is here so we can handle a should_exit event.
                 g = m.reply.q.get(timeout=0.5)
-            except Queue.Empty:  # pragma: nocover
+            except queue.Empty:  # pragma: nocover
                 continue
             return g
 
@@ -93,7 +93,7 @@ class Master(object):
             server may be None if no server is needed.
         """
         self.server = server
-        self.masterq = Queue.Queue()
+        self.masterq = queue.Queue()
         self.should_exit = threading.Event()
 
     def tick(self, q, timeout):
@@ -107,7 +107,7 @@ class Master(object):
                 msg = q.get(timeout=timeout)
                 self.handle(*msg)
                 changed = True
-        except Queue.Empty:
+        except queue.Empty:
             pass
         return changed
 

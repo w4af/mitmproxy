@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+
 import os
 import sys
 import urwid
@@ -270,9 +270,9 @@ class FlowView(tabs.Tabs):
             response.code = int(code)
         except ValueError:
             return None
-        import BaseHTTPServer
-        if int(code) in BaseHTTPServer.BaseHTTPRequestHandler.responses:
-            response.msg = BaseHTTPServer.BaseHTTPRequestHandler.responses[
+        import http.server
+        if int(code) in http.server.BaseHTTPRequestHandler.responses:
+            response.msg = http.server.BaseHTTPRequestHandler.responses[
                 int(code)][0]
         signals.flow_change.send(self, flow = self.flow)
 

@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+
 import urwid
 from netlib import http
 from . import common, signals

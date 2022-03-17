@@ -1,5 +1,5 @@
 import os
-from cStringIO import StringIO
+from io import StringIO
 from libmproxy import dump, flow
 from libmproxy.protocol import http
 from libmproxy.proxy.primitives import Log

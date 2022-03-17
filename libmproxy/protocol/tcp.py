@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+
 import select
 import socket
 from .primitives import ProtocolHandler

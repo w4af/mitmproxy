@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+
 
 import socket
 from OpenSSL import SSL
@@ -144,9 +144,9 @@ class ConnectionHandler:
             import sys
 
             self.log(traceback.format_exc(), "error")
-            print >> sys.stderr, traceback.format_exc()
-            print >> sys.stderr, "mitmproxy has crashed!"
-            print >> sys.stderr, "Please lodge a bug report at: https://github.com/mitmproxy/mitmproxy"
+            print(traceback.format_exc(), file=sys.stderr)
+            print("mitmproxy has crashed!", file=sys.stderr)
+            print("Please lodge a bug report at: https://github.com/mitmproxy/mitmproxy", file=sys.stderr)
         finally:
             # Make sure that we close the server connection in any case.
             # The client connection is closed by the ProxyServer and does not

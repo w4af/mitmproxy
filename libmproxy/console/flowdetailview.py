@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+
 import urwid
 from . import common, searchable
 from .. import utils

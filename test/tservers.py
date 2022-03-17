@@ -1,6 +1,6 @@
 import os.path
 import threading
-import Queue
+import queue
 import shutil
 import tempfile
 import flask

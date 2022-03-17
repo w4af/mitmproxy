@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+
 
 
 class StateObject(object):
@@ -24,7 +24,7 @@ class StateObject(object):
             format with long data elided.
         """
         state = {}
-        for attr, cls in self._stateobject_attributes.iteritems():
+        for attr, cls in self._stateobject_attributes.items():
             if short and attr in self._stateobject_long_attributes:
                 continue
             val = getattr(self, attr)
@@ -38,7 +38,7 @@ class StateObject(object):
         """
             Load object state from data returned by a get_state call.
         """
-        for attr, cls in self._stateobject_attributes.iteritems():
+        for attr, cls in self._stateobject_attributes.items():
             if state.get(attr, None) is None:
                 setattr(self, attr, None)
             else:

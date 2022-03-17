@@ -1,7 +1,7 @@
-from __future__ import absolute_import
-import Cookie
-import urllib
-import urlparse
+
+import http.cookies
+import urllib.request, urllib.parse, urllib.error
+import urllib.parse
 import time
 import copy
 from email.utils import parsedate_tz, formatdate, mktime_tz
@@ -541,8 +541,8 @@ class HTTPRequest(HTTPMessage):
 
             Components are unquoted.
         """
-        _, _, path, _, _, _ = urlparse.urlparse(self.url)
-        return [urllib.unquote(i) for i in path.split("/") if i]
+        _, _, path, _, _, _ = urllib.parse.urlparse(self.url)
+        return [urllib.parse.unquote(i) for i in path.split("/") if i]
 
     def set_path_components(self, lst):
         """
@@ -550,10 +550,10 @@ class HTTPRequest(HTTPMessage):
 
             Components are quoted.
         """
-        lst = [urllib.quote(i, safe="") for i in lst]
+        lst = [urllib.parse.quote(i, safe="") for i in lst]
         path = "/" + "/".join(lst)
-        scheme, netloc, _, params, query, fragment = urlparse.urlparse(self.url)
-        self.url = urlparse.urlunparse(
+        scheme, netloc, _, params, query, fragment = urllib.parse.urlparse(self.url)
+        self.url = urllib.parse.urlunparse(
             [scheme, netloc, path, params, query, fragment]
         )
 
@@ -561,7 +561,7 @@ class HTTPRequest(HTTPMessage):
         """
             Gets the request query string. Returns an ODict object.
         """
-        _, _, _, _, query, _ = urlparse.urlparse(self.url)
+        _, _, _, _, query, _ = urllib.parse.urlparse(self.url)
         if query:
             return odict.ODict(utils.urldecode(query))
         return odict.ODict([])
@@ -570,9 +570,9 @@ class HTTPRequest(HTTPMessage):
         """
             Takes an ODict object, and sets the request query string.
         """
-        scheme, netloc, path, params, _, fragment = urlparse.urlparse(self.url)
+        scheme, netloc, path, params, _, fragment = urllib.parse.urlparse(self.url)
         query = utils.urlencode(odict.lst)
-        self.url = urlparse.urlunparse(
+        self.url = urllib.parse.urlunparse(
             [scheme, netloc, path, params, query, fragment]
         )
 
@@ -838,8 +838,8 @@ class HTTPResponse(HTTPMessage):
             Takes a cookie string c and a time delta in seconds, and returns
             a refreshed cookie string.
         """
-        c = Cookie.SimpleCookie(str(c))
-        for i in c.values():
+        c = http.cookies.SimpleCookie(str(c))
+        for i in list(c.values()):
             if "expires" in i:
                 d = parsedate_tz(i["expires"])
                 if d:
@@ -983,7 +983,7 @@ class HTTPFlow(Flow):
             If f is a string, it will be compiled as a filter expression. If
             the expression is invalid, ValueError is raised.
         """
-        if isinstance(f, basestring):
+        if isinstance(f, str):
             from .. import filt
 
             f = filt.parse(f)
@@ -1249,7 +1249,7 @@ class HTTPHandler(ProtocolHandler):
             "Content-Length: %d\r\n" % len(html_content)
         )
         if headers:
-            for key, value in headers.items():
+            for key, value in list(headers.items()):
                 self.c.client_conn.wfile.write("%s: %s\r\n" % (key, value))
         self.c.client_conn.wfile.write("Connection: close\r\n")
         self.c.client_conn.wfile.write("\r\n")

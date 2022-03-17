@@ -43,7 +43,7 @@ dev_deps = {
     "countershape"
 }
 # Add *all* script dependencies to developer dependencies.
-for script_deps in scripts.values():
+for script_deps in list(scripts.values()):
     dev_deps.update(script_deps)
 
 # Remove mitmproxy for Windows support.
@@ -52,10 +52,10 @@ if os.name == "nt":
     deps.add("pydivert>=0.0.7")  # Transparent proxying on Windows
 
 # Add dependencies for available scripts as core dependencies.
-for script_deps in scripts.values():
+for script_deps in list(scripts.values()):
     deps.update(script_deps)
 
-console_scripts = ["%s = libmproxy.main:%s" % (s, s) for s in scripts.keys()]
+console_scripts = ["%s = libmproxy.main:%s" % (s, s) for s in list(scripts.keys())]
 
 setup(
     name="mitmproxy",

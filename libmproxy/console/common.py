@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+
 
 import urwid
 import urwid.util
@@ -34,7 +34,7 @@ def is_keypress(k):
     """
         Is this input event a keypress?
     """
-    if isinstance(k, basestring):
+    if isinstance(k, str):
         return True
 
 
@@ -101,7 +101,7 @@ def shortcuts(k):
 
 
 def fcol(s, attr):
-    s = unicode(s)
+    s = str(s)
     return (
         "fixed",
         len(s),
@@ -113,12 +113,12 @@ def fcol(s, attr):
     )
 
 if urwid.util.detected_encoding:
-    SYMBOL_REPLAY = u"\u21ba"
-    SYMBOL_RETURN = u"\u2190"
-    SYMBOL_MARK = u"\u25cf"
+    SYMBOL_REPLAY = "\u21ba"
+    SYMBOL_RETURN = "\u2190"
+    SYMBOL_MARK = "\u25cf"
 else:
-    SYMBOL_REPLAY = u"[r]"
-    SYMBOL_RETURN = u"<-"
+    SYMBOL_REPLAY = "[r]"
+    SYMBOL_RETURN = "<-"
     SYMBOL_MARK = "[m]"
 
 

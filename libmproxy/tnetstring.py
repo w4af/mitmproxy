@@ -64,7 +64,7 @@ like so::
     '\\xce\\xb1'
     >>>
     >>> print(repr(tnetstring.loads("2:\\xce\\xb1,","utf8")))
-    u'\u03b1'
+    u'\\u03b1'
 
 """
 
@@ -130,7 +130,7 @@ def _rdumpq(q, size, value, encoding=None):
     if value is False:
         write("5:false!")
         return size + 8
-    if isinstance(value, (int, long)):
+    if isinstance(value, int):
         data = str(value)
         ldata = len(data)
         span = str(ldata)
@@ -139,7 +139,7 @@ def _rdumpq(q, size, value, encoding=None):
         write(":")
         write(span)
         return size + 2 + len(span) + ldata
-    if isinstance(value, (float,)):
+    if isinstance(value, float):
         #  Use repr() for float rather than str().
         #  It round-trips more accurately.
         #  Probably unnecessary in later python versions that
@@ -160,7 +160,7 @@ def _rdumpq(q, size, value, encoding=None):
         write(":")
         write(span)
         return size + 2 + len(span) + lvalue
-    if isinstance(value, (list, tuple,)):
+    if isinstance(value, (list, tuple)):
         write("]")
         init_size = size = size + 1
         for item in reversed(value):
@@ -172,14 +172,14 @@ def _rdumpq(q, size, value, encoding=None):
     if isinstance(value, dict):
         write("}")
         init_size = size = size + 1
-        for (k, v) in value.iteritems():
+        for (k, v) in value.items():
             size = _rdumpq(q, size, v, encoding)
             size = _rdumpq(q, size, k, encoding)
         span = str(size - init_size)
         write(":")
         write(span)
         return size + 1 + len(span)
-    if isinstance(value, unicode):
+    if isinstance(value, str):
         if encoding is None:
             raise ValueError("must specify encoding to dump unicode strings")
         value = value.encode(encoding)
@@ -208,24 +208,24 @@ def _gdumps(value, encoding):
         yield "4:true!"
     elif value is False:
         yield "5:false!"
-    elif isinstance(value, (int, long)):
+    elif isinstance(value, int):
         data = str(value)
         yield str(len(data))
         yield ":"
         yield data
         yield "#"
-    elif isinstance(value, (float,)):
+    elif isinstance(value, float):
         data = repr(value)
         yield str(len(data))
         yield ":"
         yield data
         yield "^"
-    elif isinstance(value, (str,)):
+    elif isinstance(value, str):
         yield str(len(value))
         yield ":"
         yield value
         yield ","
-    elif isinstance(value, (list, tuple,)):
+    elif isinstance(value, (list, tuple)):
         sub = []
         for item in value:
             sub.extend(_gdumps(item))
@@ -234,9 +234,9 @@ def _gdumps(value, encoding):
         yield ":"
         yield sub
         yield "]"
-    elif isinstance(value, (dict,)):
+    elif isinstance(value, dict):
         sub = []
-        for (k, v) in value.iteritems():
+        for (k, v) in value.items():
             sub.extend(_gdumps(k))
             sub.extend(_gdumps(v))
         sub = "".join(sub)
@@ -244,7 +244,7 @@ def _gdumps(value, encoding):
         yield ":"
         yield sub
         yield "}"
-    elif isinstance(value, (unicode,)):
+    elif isinstance(value, str):
         if encoding is None:
             raise ValueError("must specify encoding to dump unicode strings")
         value = value.encode(encoding)

@@ -1,5 +1,5 @@
-from __future__ import absolute_import
-import cStringIO
+
+import io
 import json
 import logging
 import lxml.html
@@ -286,11 +286,11 @@ if pyamf:
                     return "<recursion>"
                 else:
                     seen.add(id(b))
-                    for k, v in b.items():
+                    for k, v in list(b.items()):
                         b[k] = self.unpack(v, seen)
                     return b
             elif isinstance(b, dict):
-                for k, v in b.items():
+                for k, v in list(b.items()):
                     b[k] = self.unpack(v, seen)
                 return b
             elif isinstance(b, list):
@@ -370,7 +370,7 @@ class ViewImage:
 
     def __call__(self, hdrs, content, limit):
         try:
-            img = Image.open(cStringIO.StringIO(content))
+            img = Image.open(io.StringIO(content))
         except IOError:
             return None
         parts = [

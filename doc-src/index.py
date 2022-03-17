@@ -26,7 +26,7 @@ this.markup = markup.Markdown(extras=["footnotes"])
 
 ns.docMaintainer = "Aldo Cortesi"
 ns.docMaintainerEmail = "aldo@corte.si"
-ns.copyright = u"\u00a9 mitmproxy project, %s" % datetime.date.today().year
+ns.copyright = "\u00a9 mitmproxy project, %s" % datetime.date.today().year
 
 
 def mpath(p):

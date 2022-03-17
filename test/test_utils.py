@@ -143,7 +143,7 @@ def test_parse_content_type():
 
 
 def test_safe_subn():
-    assert utils.safe_subn("foo", u"bar", "\xc2foo")
+    assert utils.safe_subn("foo", "bar", "\xc2foo")
 
 
 def test_urlencode():

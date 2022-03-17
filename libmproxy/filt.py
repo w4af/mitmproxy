@@ -31,7 +31,7 @@
         ~c CODE     Response code.
         rex         Equivalent to ~u rex
 """
-from __future__ import absolute_import
+
 import re
 import sys
 import pyparsing as pp
@@ -40,10 +40,10 @@ from .protocol.http import decoded
 
 class _Token:
     def dump(self, indent=0, fp=sys.stdout):
-        print >> fp, "\t" * indent, self.__class__.__name__,
+        print("\t" * indent, self.__class__.__name__, end=' ', file=fp)
         if hasattr(self, "expr"):
-            print >> fp, "(%s)" % self.expr,
-        print >> fp
+            print("(%s)" % self.expr, end=' ', file=fp)
+        print(file=fp)
 
 
 class _Action(_Token):
@@ -274,7 +274,7 @@ class FAnd(_Token):
         self.lst = lst
 
     def dump(self, indent=0, fp=sys.stdout):
-        print >> fp, "\t" * indent, self.__class__.__name__
+        print("\t" * indent, self.__class__.__name__, file=fp)
         for i in self.lst:
             i.dump(indent + 1, fp)
 
@@ -287,7 +287,7 @@ class FOr(_Token):
         self.lst = lst
 
     def dump(self, indent=0, fp=sys.stdout):
-        print >> fp, "\t" * indent, self.__class__.__name__
+        print("\t" * indent, self.__class__.__name__, file=fp)
         for i in self.lst:
             i.dump(indent + 1, fp)
 
@@ -300,7 +300,7 @@ class FNot(_Token):
         self.itm = itm[0]
 
     def dump(self, indent=0, fp=sys.stdout):
-        print >> fp, "\t" * indent, self.__class__.__name__
+        print("\t" * indent, self.__class__.__name__, file=fp)
         self.itm.dump(indent + 1, fp)
 
     def __call__(self, f):

@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+
 import os
 import re
 from OpenSSL import SSL
@@ -24,7 +24,7 @@ class HostMatcher(object):
         else:
             return False
 
-    def __nonzero__(self):
+    def __bool__(self):
         return bool(self.patterns)
 
 
@@ -284,7 +284,7 @@ def ssl_option_group(parser):
         str(TRANSPARENT_SSL_PORTS))
     group.add_argument(
         "--ssl-version-client", dest="ssl_version_client", type=str, default=tcp.SSL_DEFAULT_VERSION,
-        choices=tcp.SSL_VERSIONS.keys(),
+        choices=list(tcp.SSL_VERSIONS.keys()),
         help=""""
             Use a specified protocol for client connections:
             TLSv1.2, TLSv1.1, TLSv1, SSLv3, SSLv2, SSLv23.
@@ -292,7 +292,7 @@ def ssl_option_group(parser):
     )
     group.add_argument(
         "--ssl-version-server", dest="ssl_version_server", type=str, default=tcp.SSL_DEFAULT_VERSION,
-        choices=tcp.SSL_VERSIONS.keys(),
+        choices=list(tcp.SSL_VERSIONS.keys()),
         help=""""
             Use a specified protocol for server connections:
             TLSv1.2, TLSv1.1, TLSv1, SSLv3, SSLv2, SSLv23.

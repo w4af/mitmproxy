@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+
 import os
 import re
 import configargparse
@@ -593,7 +593,7 @@ def mitmproxy():
         "--palette", type=str, default=palettes.DEFAULT,
         action="store", dest="palette",
         choices=sorted(palettes.palettes.keys()),
-        help="Select color palette: " + ", ".join(palettes.palettes.keys())
+        help="Select color palette: " + ", ".join(list(palettes.palettes.keys()))
     )
     parser.add_argument(
         "--palette-transparent",

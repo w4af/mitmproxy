@@ -1,4 +1,4 @@
-from cStringIO import StringIO
+from io import StringIO
 import os
 import shutil
 import tempfile
@@ -202,7 +202,7 @@ def raises(exc, obj, *args, **kwargs):
     try:
         obj(*args, **kwargs)
     except Exception as v:
-        if isinstance(exc, basestring):
+        if isinstance(exc, str):
             if exc.lower() in str(v).lower():
                 return
             else:

@@ -1,4 +1,4 @@
-import cStringIO
+import io
 from netlib import odict
 from libmproxy import filt, flow
 from libmproxy.protocol import http
@@ -8,7 +8,7 @@ import tutils
 
 class TestParsing:
     def _dump(self, x):
-        c = cStringIO.StringIO()
+        c = io.StringIO()
         x.dump(fp=c)
         assert c.getvalue()
 
