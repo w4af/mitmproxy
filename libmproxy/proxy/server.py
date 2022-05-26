@@ -9,6 +9,10 @@ from .connection import ClientConnection, ServerConnection
 from ..protocol.handle import protocol_handler
 from .. import version
 
+def bytes_to_str(b):
+    if hasattr(b, 'decode'):
+        return b.decode('utf-8')
+    return s
 
 class DummyServer:
     bound = False
@@ -315,7 +319,7 @@ class ConnectionHandler:
              self.client_conn.address.port,
              msg)]
         for i in subs:
-            msg.append("  -> " + i)
+            msg.append("  -> " + bytes_to_str(i))
         msg = "\n".join(msg)
         self.channel.tell("log", Log(msg, level))
 

@@ -4,6 +4,7 @@ import urllib.request, urllib.parse, urllib.error
 import urllib.parse
 import time
 import copy
+import collections
 from email.utils import parsedate_tz, formatdate, mktime_tz
 import threading
 from netlib import http, tcp, http_status, http_cookies
@@ -21,6 +22,20 @@ CONTENT_MISSING = 0
 
 class KillSignal(Exception):
     pass
+
+def str_to_bytes(s):
+    if hasattr(s, 'encode'):
+        return s.encode('utf-8')
+    if not isinstance(s, bytes):
+        return str(s).encode('utf-8')
+    return s
+
+def format_headers(headers):
+    elements = []
+    for itm in headers:
+        elements.append(str_to_bytes(itm[0]) + b": " + str_to_bytes(itm[1]))
+    elements.append(b"")
+    return b"\r\n".join(elements)
 
 
 def send_connect_request(conn, host, port, update_state=True):
@@ -400,7 +415,7 @@ class HTTPRequest(HTTPMessage):
             )
         else:
             raise http.HttpError(400, "Invalid request form")
-        return request_line
+        return str_to_bytes(request_line)
 
     # This list is adopted legacy code.
     # We probably don't need to strip off keep-alive.
@@ -424,10 +439,10 @@ class HTTPRequest(HTTPMessage):
         if self.content or self.content == "":
             headers["Content-Length"] = [str(len(self.content))]
 
-        return headers.format()
+        return format_headers(headers)
 
     def _assemble_head(self, form=None):
-        return "%s\r\n%s\r\n" % (
+        return b"%s\r\n%s\r\n" % (
             self._assemble_first_line(form), self._assemble_headers()
         )
 
@@ -701,7 +716,7 @@ class HTTPResponse(HTTPMessage):
             content,
             timestamp_start=None,
             timestamp_end=None):
-        assert isinstance(headers, odict.ODictCaseless) or headers is None
+        assert isinstance(headers, collections.abc.MutableMapping) or headers is None
         HTTPMessage.__init__(
             self,
             httpversion,
@@ -786,8 +801,8 @@ class HTTPResponse(HTTPMessage):
         )
 
     def _assemble_first_line(self):
-        return 'HTTP/%s.%s %s %s' % \
-               (self.httpversion[0], self.httpversion[1], self.code, self.msg)
+        return str_to_bytes('HTTP/%s.%s %s %s' % \
+               (self.httpversion[0], self.httpversion[1], self.code, self.msg))
 
     _headers_to_strip_off = ['Proxy-Connection',
                              'Alternate-Protocol',
@@ -796,19 +811,21 @@ class HTTPResponse(HTTPMessage):
     def _assemble_headers(self, preserve_transfer_encoding=False):
         headers = self.headers.copy()
         for k in self._headers_to_strip_off:
-            del headers[k]
+            if k in headers:
+                del headers[k]
         if not preserve_transfer_encoding:
-            del headers['Transfer-Encoding']
+            if 'Transfer-Encoding' in headers:
+                del headers['Transfer-Encoding']
 
         # If content is defined (i.e. not None or CONTENT_MISSING), we always
         # add a content-length header.
         if self.content or self.content == "":
             headers["Content-Length"] = [str(len(self.content))]
 
-        return headers.format()
+        return format_headers(headers)
 
     def _assemble_head(self, preserve_transfer_encoding=False):
-        return '%s\r\n%s\r\n' % (
+        return b'%s\r\n%s\r\n' % (
             self._assemble_first_line(),
             self._assemble_headers(
                 preserve_transfer_encoding=preserve_transfer_encoding
