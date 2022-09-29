@@ -32,8 +32,11 @@ def str_to_bytes(s):
 
 def format_headers(headers):
     elements = []
-    for itm in headers:
-        elements.append(str_to_bytes(itm[0]) + b": " + str_to_bytes(itm[1]))
+    for itm in headers.items():
+        value = itm[1]
+        if isinstance(value, list):
+            value = b",".join([ str_to_bytes(i) for i in value ])
+        elements.append(str_to_bytes(itm[0]) + b": " + str_to_bytes(value))
     elements.append(b"")
     return b"\r\n".join(elements)
 
@@ -804,9 +807,9 @@ class HTTPResponse(HTTPMessage):
         return str_to_bytes('HTTP/%s.%s %s %s' % \
                (self.httpversion[0], self.httpversion[1], self.code, self.msg))
 
-    _headers_to_strip_off = ['Proxy-Connection',
-                             'Alternate-Protocol',
-                             'Alt-Svc']
+    _headers_to_strip_off = [b'Proxy-Connection',
+                             b'Alternate-Protocol',
+                             b'Alt-Svc']
 
     def _assemble_headers(self, preserve_transfer_encoding=False):
         headers = self.headers.copy()
@@ -814,13 +817,13 @@ class HTTPResponse(HTTPMessage):
             if k in headers:
                 del headers[k]
         if not preserve_transfer_encoding:
-            if 'Transfer-Encoding' in headers:
-                del headers['Transfer-Encoding']
+            if b'Transfer-Encoding' in headers:
+                del headers[b'Transfer-Encoding']
 
         # If content is defined (i.e. not None or CONTENT_MISSING), we always
         # add a content-length header.
         if self.content or self.content == "":
-            headers["Content-Length"] = [str(len(self.content))]
+            headers[b"Content-Length"] = [str(len(self.content))]
 
         return format_headers(headers)
 
@@ -884,9 +887,9 @@ class HTTPResponse(HTTPMessage):
             now = time.time()
         delta = now - self.timestamp_start
         refresh_headers = [
-            "date",
-            "expires",
-            "last-modified",
+            b"date",
+            b"expires",
+            b"last-modified",
         ]
         for i in refresh_headers:
             if i in self.headers:
@@ -895,10 +898,10 @@ class HTTPResponse(HTTPMessage):
                     new = mktime_tz(d) + delta
                     self.headers[i] = [formatdate(new)]
         c = []
-        for i in self.headers["set-cookie"]:
+        for i in self.headers[b"set-cookie"]:
             c.append(self._refresh_cookie(i, delta))
         if c:
-            self.headers["set-cookie"] = c
+            self.headers[b"set-cookie"] = c
 
     def get_cookies(self):
         """
@@ -910,7 +913,7 @@ class HTTPResponse(HTTPMessage):
             attributes (e.g. HTTPOnly) are indicated by a Null value.
         """
         ret = []
-        for header in self.headers["set-cookie"]:
+        for header in self.headers[b"set-cookie"]:
             v = http_cookies.parse_set_cookie_header(header)
             if v:
                 name, value, attrs = v

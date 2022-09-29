@@ -12,7 +12,7 @@ from .. import version
 def bytes_to_str(b):
     if hasattr(b, 'decode'):
         return b.decode('utf-8')
-    return s
+    return b
 
 class DummyServer:
     bound = False
