@@ -257,7 +257,7 @@ class ConnectionHandler:
                 # The upstream server may reject connections without SNI, which means we need to
                 # establish SSL with the client first, hope for a SNI (which triggers a reconnect which replaces the
                 # ServerConnection object) and see whether that worked.
-                if client and "handshake failure" in e.message:
+                if client and "handshake failure" in repr(e):
                     self.server_conn.may_require_sni = e
                 else:
                     ssl_cert_err = self.server_conn.ssl_verification_error
