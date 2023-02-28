@@ -5,7 +5,6 @@ import urllib.request, urllib.parse, urllib.error
 import re
 import time
 import functools
-import cgi
 import json
 
 
@@ -64,7 +63,7 @@ def urldecode(s):
     """
         Takes a urlencoded string and returns a list of (key, value) tuples.
     """
-    return cgi.parse_qsl(s, keep_blank_values=True)
+    return urllib.parse.parse_qsl(s, keep_blank_values=True)
 
 
 def urlencode(s):
